@@ -2,6 +2,12 @@ import { Anime } from "../entity/Anime";
 import { AppDataSource } from "../data-source";
 import { Request, Response } from "express";
 
+
+interface MyRequest extends Request {
+    userId?: string;
+}
+
+
 export const getAllAnime = async (_req: Request, res: Response) => {
     try {
         const animeRepository = AppDataSource.getRepository(Anime);
@@ -19,17 +25,19 @@ export const getAnimeById = async (req: Request, res: Response) => {
         const anime = await animeRepository.findOne({ where: { id: animeId } });
 
         if (!anime) {
-            res.status(404).json({ error: "Anime not found" });
+            return res.status(404).json({ error: "Anime not found" });
         }
 
         res.json(anime);
     } catch (error) {
-        res.status(500).json({ error: "Error fetching anime" });
+        return res.status(500).json({ error: "Error fetching anime" });
     }
 };
 
-export const createAnime = async (req: Request, res: Response) => {
+export const createAnime = async (req: MyRequest, res: Response) => {
     try {
+        console.log(req.body.userId);
+
         const { title, description } = req.body;
         const animeRepository = AppDataSource.getRepository(Anime);
         const newAnime = animeRepository.create({
