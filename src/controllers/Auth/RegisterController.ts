@@ -9,8 +9,6 @@ export const register = async (req: Request, res: Response) => {
 
         const userRepository = AppDataSource.getRepository(User);
 
-
-
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
         console.log(passwordHash);

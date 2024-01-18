@@ -3,9 +3,6 @@ import { AppDataSource } from "../data-source";
 import { Request, Response } from "express";
 
 
-interface MyRequest extends Request {
-    userId?: string;
-}
 
 
 export const getAllAnime = async (_req: Request, res: Response) => {
@@ -34,7 +31,7 @@ export const getAnimeById = async (req: Request, res: Response) => {
     }
 };
 
-export const createAnime = async (req: MyRequest, res: Response) => {
+export const createAnime = async (req: Request, res: Response) => {
     try {
         console.log(req.body.userId);
 

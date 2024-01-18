@@ -1,28 +1,28 @@
 import { NextFunction, Request, Response } from "express";
-//import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { SECRET_KEY } from "../config/config";
 
-
-interface MyRequest extends Request {
-    userId?: string;
+interface CustomRequest extends Request {
+    userId: string;
 }
-/*
-interface DecodedToken {
-    userId?: string;
-    // Other properties as needed
-}
-*/
 
 
-export const authMiddleware = (req: MyRequest, _res: Response, next: NextFunction) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const customReq = req as CustomRequest;
     try {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        console.log(token);
 
-        //const token = req.headers.authorization ?? '';
-        //  const decodedToken = jwt.decode(token) as DecodedToken;
-        req.userId = '24';
+        if (!token) {
+            return res.status(401).json({ message: 'No se ha proporcionado un token' });
+        }
 
+        const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayload;
+        customReq.userId = decodedToken.userId;
 
         next();
     } catch (error) {
-        _res.status(401).json({ message: 'No autorizado' });
+        console.error(error); // Log the error for debugging
+        return res.status(401).json({ message: 'Token inválido' });
     }
 };
